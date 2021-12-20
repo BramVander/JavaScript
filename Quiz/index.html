@@ -10,10 +10,20 @@
     <section class="dojo">
       <div class="quiz-body">
         <header>
+          <div id="score">Score: <strong>0</strong></div>
           <h1>Quiz Ninja!</h1>
         </header>
+        <div id="question"></div>
+        <form id="response">
+          <input type="text" name="answer" />
+          <button type="submit">Submit answer</button>
+        </form>
+        <div id="result"></div>
+        <div id="info"></div>
+        <button id="start">Click to Start</button>
       </div>
     </section>
-    <script src="main.js"></script>
+
+    <script defer src="main.js"></script>
   </body>
 </html>
