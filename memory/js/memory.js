@@ -2,30 +2,21 @@
 
 let subSet;
 let boardClass;
+let myCardArray = [];
+let myCardSet = [];
 
 const myField = document.getElementById("field");
 const selectSize = document.querySelector("#selectSize");
-const myCardArray = [
-  "duck",
-  "kitten",
-  "piglet",
-  "puppy",
-  "calf",
-  "veal",
-  "lamb",
-  "rooster",
-  "horse",
-  "mouse",
-  "dog",
-  "cat",
-  "goose",
-  "goat",
-  "sheep",
-  "pig",
-  "cow",
-  "chick",
-  "hen",
-];
+
+// // function to double card array
+// function doubleElements(array) {
+//   var newArray = [];
+//   array.forEach(function (el) {
+//     // push element twice
+//     newArray.push(el, el);
+//   });
+//   return newArray;
+// }
 
 // Fisher/Yates shuffle
 function shuffle(array) {
@@ -45,31 +36,23 @@ function shuffle(array) {
   return array;
 }
 
-// card class
+// construct as object
 class Card {
-  constructor(card1, card2 = card1, set = card1, sound = card1) {
-    this.card1 = card1;
-    this.card2 = card2;
-    this.set = set;
-    this.sound = sound;
+  constructor(card) {
+    this.card1 = card.card1;
+    this.card2 = card.card2;
+    this.set = card.set;
+    this.sound = card.sound;
   }
 }
 
-// create card array with class
-const myDoubles = myCardArray.map((card) => new Card(card));
-
-// get duplicate cards
-// let concat = myDoubles.concat(myDoubles);
-function doubleElements(array) {
-  var newArray = [];
-  array.forEach(function (el) {
-    // push element twice
-    newArray.push(el, el);
+// fetch data from js file and put into myCardSet
+fetch("js/cards.json")
+  .then((response) => response.json())
+  .then((data) => {
+    myCardSet = data.map((card) => new Card(card));
+    // console.log(myCardArray);
   });
-  return newArray;
-}
-const myCardSet = doubleElements(myDoubles);
-shuffle(myCardSet);
 
 // populate field
 const populateField = function (cardset) {
@@ -94,13 +77,15 @@ const onClickCard = function (e) {
   if (e.target.className === "covered") e.target.className = "uncovered";
   // gaurd clause for misclick
   if (!e.target.parentNode.firstChild.getAttribute("name")) return;
-  console.log(e.target.parentNode.firstChild.getAttribute("name"));
+  // console.log(e.target.parentNode.firstChild.getAttribute("name"));
 };
 
 // select field size
 const onSelectFieldSize = function (e) {
   e.preventDefault();
-  myField.innerHTML = '';
+  // clear field
+  myField.innerHTML = "";
+  // set size
   let selectedSize = e.target.value;
   switch (selectedSize) {
     case "4":
@@ -116,12 +101,11 @@ const onSelectFieldSize = function (e) {
       subSet = 18;
       break;
   }
-  let classArray = myCardArray.map((card) => new Card(card));
-  // shuffle the cards to get different img each time, slice the subset
-  let shuffledSub = shuffle(classArray).slice(0, subSet);
-  // double it
-  let doubledSub = doubleElements(shuffledSub);
-  // shuffle doubles
+  // // shuffle the cards to get different img each time and slice the subset for fieldsize
+  let shuffledSub = shuffle(myCardSet).slice(0, subSet);
+  // // double the cards for duplicates
+  let doubledSub = shuffledSub.concat(shuffledSub);
+  // // shuffle doubles
   shuffle(doubledSub);
   // populate field
   populateField(doubledSub);
