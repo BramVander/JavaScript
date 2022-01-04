@@ -114,23 +114,6 @@ const game = {
   },
 
   check(event) {
-    event.preventDefault();
-    const response = view.response.answer.value;
-    const answer = this.question.realName;
-    if (response === answer) {
-      view.render(view.result, "Correct!", { class: "correct" });
-      this.score++;
-      view.render(view.score, this.score);
-    } else {
-      view.render(view.result, `Wrong! The correct answer was ${answer}`, {
-        class: "wrong",
-      });
-    }
-    view.resetForm();
-    this.ask();
-  },
-
-  check(event) {
     console.log("check(event) invoked");
     const response = event.target.textContent;
     const answer = this.question.realName;
@@ -154,6 +137,15 @@ const game = {
       `Game Over, you scored ${this.score} point${this.score !== 1 ? "s" : ""}`
     );
     view.teardown();
+  },
+
+  hiScore() {
+    const hi = localStorage.getItem("highScore") || 0;
+    if (this.score > hi || hi === 0) {
+      localStorage.setItem("highScore", this.score);
+      view.render(view.info, "** NEW HIGH SCORE! **");
+    }
+    return localStorage.getItem("highScore");
   },
 };
 
