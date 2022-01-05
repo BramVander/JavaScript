@@ -83,11 +83,11 @@ const populateField = function (cardset) {
     let newCard = document.createElement("img");
     let cover = document.createElement("img");
     let sound = document.createElement("audio");
-    sound.setAttribute("src", `/snd/${card.card1}.wav`);
-    cover.setAttribute("src", "/img/cover.png");
+    sound.setAttribute("src", `snd/${card.card1}.wav`);
+    cover.setAttribute("src", "img/cover.png");
     cover.setAttribute("class", "covered");
     newTile.setAttribute("class", boardClass);
-    newCard.setAttribute("src", `/img/${card.card1}.jpg`);
+    newCard.setAttribute("src", `img/${card.card1}.jpg`);
     newCard.setAttribute("name", card.card1);
     newCard.setAttribute("data-set", card.set);
     newTile.appendChild(newCard);
