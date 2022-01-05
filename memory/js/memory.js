@@ -1,7 +1,17 @@
 "use strict";
 
-// const player = !localstorage.player ? prompt("What is your name?") : localstorage.player;
+// generate empty highscores
+let highscore = {
+  username: "breakMe",
+  score: 0,
+  attempts: 1000,
+};
 
+localStorage.setItem("board4x4", JSON.stringify(highscore));
+localStorage.setItem("board5x5", JSON.stringify(highscore));
+localStorage.setItem("board6x6", JSON.stringify(highscore));
+
+let selectedSize;
 let subSet;
 let boardClass;
 let uncovered;
@@ -11,6 +21,23 @@ let foundSets = [];
 let countClick = 0;
 let attempts = 0;
 let score = 0;
+let username;
+let toParse;
+let parsed;
+
+let player = {
+  username: username,
+  score: score,
+  attempts: attempts,
+};
+
+if (!localStorage.getItem("username")) {
+  player.username = prompt("what is ur preferred username?");
+  localStorage.setItem("username", player.username);
+} else {
+  player.username = localStorage.getItem("username");
+  alert(`welcome back ${player.username}`);
+}
 
 const myField = document.getElementById("field");
 const selectSize = document.querySelector("#selectSize");
@@ -77,17 +104,29 @@ const turnCards = function () {
 
 // win condition
 const gameWon = function () {
-  // attempts / 2 because finding a set [1 attempt] takes 2 clicks
-  alert(
-    // score altijd zelfde per bord want zelfde aantal matches?
-    `gratz ${player}!, you've won with a score of ${score} in ${
-      attempts / 2
-    } attempts`
+  player.score = score;
+  player.attempts = attempts;
+
+  let currentHighscore = localStorage.getItem(
+    `board${selectedSize}x${selectedSize}`
   );
+
+  let hs = JSON.parse(currentHighscore);
+  if (player.attempts < hs.attempts) {
+    localStorage.setItem(
+      `board${selectedSize}x${selectedSize}`,
+      JSON.stringify(player)
+    );
+  }
+
+  let div = document.createElement("div");
+  div.innerHTML = `You have won the ${selectedSize}x${selectedSize}board! It took you ${player.attempts} attempts to reach the perfect score of ${player.score}`;
+  myField.appendChild(div);
 };
 
 // check set function
 const checkSet = function () {
+  attempts++;
   // get uncovered cards
   uncovered = document.querySelectorAll(".uncovered");
   uncovered.forEach((ele) =>
@@ -101,7 +140,7 @@ const checkSet = function () {
     // we use 5s because longest audio file takes 5s (goose)
     setTimeout(
       () => uncovered.forEach((ele) => ele.parentElement.remove()),
-      5000
+      3000
     );
     score++;
   }
@@ -114,7 +153,7 @@ const checkSet = function () {
   checkMatch = [];
   setTimeout(() => {
     turnCards();
-  }, 5000);
+  }, 3000);
 };
 
 // toggle clickability when checking for match
@@ -122,22 +161,36 @@ const toggleClick = function () {
   myField.removeEventListener("click", onClickCard);
   setTimeout(() => {
     myField.addEventListener("click", onClickCard);
-  }, 5000);
-  countClick = 0;
+  }, 3000);
+};
+
+const startTimer = function () {
+  // create timer element
+  let timer = document.createElement("div");
+  // set timer
+  let time = 0;
+  setInterval(function () {
+    timer.innerHTML = `You started this game ${time} seconds ago`;
+  });
+  myField.appendChild(timer);
+  setInterval(function () {
+    time++;
+  }, 1000);
 };
 
 // click card
 const onClickCard = function (e) {
   e.preventDefault();
   countClick++;
-  attempts++;
+  // we start timer at first click
+  if (countClick === 1) startTimer();
   if (e.target.className === "covered") e.target.className = "uncovered";
   // gaurd clause for misclick
   if (!e.target.parentNode.firstChild.getAttribute("name")) return;
   // play sound, select audio element through parent and play()
   e.target.parentElement.lastChild.play();
   // at 2 clicks disable click, give 3s to check match, turn cards back down
-  if (countClick === 2) {
+  if (countClick % 2 === 0) {
     toggleClick();
     checkSet();
   }
@@ -149,7 +202,7 @@ const onSelectFieldSize = function (e) {
   // clear field
   myField.innerHTML = "";
   // set size
-  let selectedSize = e.target.value;
+  selectedSize = e.target.value;
   switch (selectedSize) {
     // 4x4
     case "4":
