@@ -138,6 +138,7 @@ const checkSet = function () {
     foundSets.push(checkMatch[0]);
     // if match, remove from game after 5s and increment score
     // we use 5s because longest audio file takes 5s (goose)
+    // 5s is too long, set to 3 (and we might not even slice the goose)
     setTimeout(
       () => uncovered.forEach((ele) => ele.parentElement.remove()),
       3000
@@ -220,7 +221,7 @@ const onSelectFieldSize = function (e) {
       subSet = 18;
       break;
   }
-  // shuffle the cards to get different imgs each time and slice the subset for fieldsize
+  // shuffle the cards to slice different imgs each time, and slice the subset for fieldsize
   let shuffledSub = shuffle(myCardSet).slice(0, subSet);
   // double the cards for duplicates
   let doubledSub = shuffledSub.concat(shuffledSub);
