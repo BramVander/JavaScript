@@ -11,12 +11,18 @@ localStorage.setItem("board4x4", JSON.stringify(highscore));
 localStorage.setItem("board5x5", JSON.stringify(highscore));
 localStorage.setItem("board6x6", JSON.stringify(highscore));
 
+// boardsize
 let selectedSize;
+// subset of cards according to boardsize
 let subSet;
+// class for displaying field
 let boardClass;
 let uncovered;
+// the set from which to slice the number of sets to find
 let myCardSet = [];
+// array that contains clicked cards, if elements are same the match is found
 let checkMatch = [];
+// found sets are pushed to this array
 let foundSets = [];
 let countClick = 0;
 let attempts = 0;
@@ -136,7 +142,7 @@ const checkSet = function () {
   // compare and push if set
   if (checkMatch[0] === checkMatch[1]) {
     foundSets.push(checkMatch[0]);
-    // if match, remove from game after 5s and increment score
+    // if match, remove from game after 3s and increment score
     // we use 5s because longest audio file takes 5s (goose)
     // 5s is too long, set to 3 (and we might not even slice the goose)
     setTimeout(
